@@ -14,24 +14,29 @@ class Brute:
         self.notContains = set()
     
     def drop_words(self):
-        resList = []
+        resList = [] # this list will contain the words that have letters that are not in the notContains set
         for word in self.posWordList:
+            count = 0
             for char in word:
                 if char in self.notContains:
-                    resList.append(word)
-                    break
+                    count += 1
+            if count != len(word):
+                resList.append(word)
+
         self.posWordList = resList
                     
             
 
     def guess(self, word, goal, numToReturn):
+        print(self.curMatchingPos, "matching set")
+        print(self.curContains, "contains set")
         if word == goal:
             return True, []
         self.trimSet(word, goal)
         self.drop_words()
         word_to_val = self.scoreWords(word)
         sorted_word_to_val = sorted(word_to_val.items(), key=lambda x: x[1], reverse=True)
-        return False, list(sorted_word_to_val.values())[:numToReturn]
+        return False, sorted_word_to_val[:numToReturn]
 
     def trimSet(self, word, goal):
         matchingPos = self.retMatchingPos(word, goal)
