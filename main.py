@@ -1,24 +1,5 @@
 from preprocess import bin_alphabet
 
-import sys
-
-
-
-def custom_repl():
-    dic = bin_alphabet()
-    while True:
-        print(">>")
-        for line in sys.stdin:
-            line = line.strip()
-            if line.lower() == "exit":
-                sys.exit("Exiting... Bye!")
-
-            if line.lower() == "clear":
-                print("\n" * 100)
-                continue
-            print(line)
-            break
-
 program = """
 test(word)
 """
