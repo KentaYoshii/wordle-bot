@@ -1,16 +1,28 @@
-from preprocess import bin_alphabet
+from preprocess import word_list
+import random 
+from brute import Brute
+
+
+words = word_list()
+goal = random.choice(words)
+model  = Brute(goal)
+
 
 program = """
-test(word)
+bool, list = guess(word)
+if bool:
+    print("Your guess is correct!")
+    exit()
+else:   
+    for word in list:
+        print(word)
 """
 
-def test(word: str) -> None:
-    print(word)
-
 globals = {
-    "test": test,
+    "guess": model.guess,
     "word": "",
 }
+
 
 
 def repl() -> None:

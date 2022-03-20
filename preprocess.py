@@ -8,3 +8,8 @@ def bin_alphabet():
             for char in line:
                 alpha_to_bin[char].append(line)
     return alpha_to_bin
+
+def word_list():
+    with open("data/word.txt") as f:
+        return [line.strip() for line in f]
+        
