@@ -35,12 +35,12 @@ class Brute:
             return True, []
         self.trimSet(self.word, goal)
         self.drop_words()
-
         word_to_val = self.scoreWords(self.word)
         sorted_word_to_val = sorted(word_to_val.items(), key=lambda x: x[1], reverse=True)
+        final_set = self.subTrim(sorted_word_to_val)
         print(self.curMatchingPos, "matching set")
         print(self.curContains, "contains set")
-        return False, sorted_word_to_val[:numToReturn]
+        return False, final_set[:numToReturn]
 
     def trimSet(self, word, goal):
         self.retMatchingPos(word, goal) # returns dic with idx -> char mapping
@@ -49,6 +49,16 @@ class Brute:
         curNotContains = [char for char in curNotContains if char not in self.curMatchingPos.values()]
         self.notContains.update(curNotContains)
         
+    def subTrim(self, word_set):
+        retSet = []
+        for word in word_set:
+            for i in range(len(word)):
+                if word[i] in self.curContains:
+                    if i in self.curContains[word[i]]:
+                        break
+            retSet.insert(0, word)
+        return retSet
+
     def scoreWords(self, word):
         word_to_val = {}
         for word in self.posWordList:
