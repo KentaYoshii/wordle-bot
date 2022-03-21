@@ -22,10 +22,8 @@ class Brute:
                 if char in self.notContains:
                     count += 1
             if count != len(word):
-                resList.append(word)
-
+                resList.append(word)       
         self.posWordList = resList
-                    
             
 
     def guess(self, word, goal, numToReturn):
@@ -35,12 +33,14 @@ class Brute:
             return True, []
         self.trimSet(self.word, goal)
         self.drop_words()
-        word_to_val = self.scoreWords(self.word)
-        sorted_word_to_val = sorted(word_to_val.items(), key=lambda x: x[1], reverse=True)
-        final_set = self.subTrim(sorted_word_to_val)
+        # word_to_val = self.scoreWords(self.word)
+        # sorted_word_to_val = sorted(word_to_val.items(), key=lambda x: x[1], reverse=True)
+        final_set = self.subTrim(self.posWordList)
+        final_set2 = self.finalTrim(final_set)
+    
         print(self.curMatchingPos, "matching set")
         print(self.curContains, "contains set")
-        return False, final_set[:numToReturn]
+        return False, final_set2[:numToReturn]
 
     def trimSet(self, word, goal):
         self.retMatchingPos(word, goal) # returns dic with idx -> char mapping
@@ -48,15 +48,32 @@ class Brute:
         curNotContains = [char for char in word if char not in self.curContains]
         curNotContains = [char for char in curNotContains if char not in self.curMatchingPos.values()]
         self.notContains.update(curNotContains)
+    
+    def finalTrim(self, word_set):
+        dict = {0:[], 1: [], 2: [], 3: [], 4: [], 5: []}
+        for word in word_set:
+            count = 0
+            for i in range(len(word)):
+                if word[i] == self.curMatchingPos[i]:
+                    count += 1
+            dict[count].append(word)
+
+        retSet = []
+        for i in range(5, -1, -1):
+            if i == 5:
+                retSet = retSet + dict[i]
+            else:
+                retSet = retSet + dict[i]
+        return retSet
         
-    def subTrim(self, word_set):
+    def subTrim(self, word_set): # gets rid of the words that share all their letters with not Contains.
         retSet = []
         for word in word_set:
             for i in range(len(word)):
                 if word[i] in self.curContains:
                     if i in self.curContains[word[i]]:
                         break
-            retSet.insert(0, word)
+            retSet.append(word)
         return retSet
 
     def scoreWords(self, word):

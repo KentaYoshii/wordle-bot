@@ -44,4 +44,5 @@ if __name__ == "__main__":
     print("Welcome to Wordle!")
     print("Your Input should be formatted as:")
     print("<word> <number of suggestions to show>")
+    print("answer:", goal)
     repl()
