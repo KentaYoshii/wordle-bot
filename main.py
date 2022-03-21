@@ -1,11 +1,11 @@
 from preprocess import word_list
 import random 
-from brute import Brute
+from wordle_helper import Brute
 
 
 words = word_list()
 goal = random.choice(words)
-goal = "their"
+#goal = "their"
 model  = Brute(goal)
 
 
@@ -32,22 +32,27 @@ def repl() -> None:
     try:
         while True:
             try:
+                if count == 6:
+                    print("You have run out of guesses. The word was:", goal)
+                    exit()
                 print("\n")
                 _in = input(str(count) + str(dict[count]) + " attempt:")
                 inputs = _in.split(" ")
                 globals["word"] = inputs[0]
                 globals["num"] = inputs[1]
+                print("\n")
                 exec(program, globals)
                 count += 1
             except Exception as e:
-                print((f"Error: {e}"))
+                print((f"Error: word not in the list, less than 5 letters, or already guessed."))
     except KeyboardInterrupt as e:
         print("\nExiting...")
 
         
 if __name__ == "__main__":
     print("Welcome to Wordle!")
+    print("\n")
+    print("Enter a word and a number to guess the word.\n")
     print("Your Input should be formatted as:")
     print("<word> <number of suggestions to show>")
-    print("answer:", goal)
     repl()
