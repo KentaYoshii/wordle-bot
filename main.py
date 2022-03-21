@@ -5,6 +5,7 @@ from brute import Brute
 
 words = word_list()
 goal = random.choice(words)
+goal = "their"
 model  = Brute(goal)
 
 
@@ -14,8 +15,7 @@ if bool:
     print("Your guess is correct!")
     exit()
 else:   
-    for word in list:
-        print(word)
+    print(list)
 """
 
 globals = {
@@ -25,15 +25,20 @@ globals = {
     "num": 0,
 }
 
+dict = {1: "st", 2: "nd", 3: "rd", 4: "th", 5: "th"}
+
 def repl() -> None:
+    count = 1
     try:
         while True:
             try:
-                _in = input(">>> ")
+                print("\n")
+                _in = input(str(count) + str(dict[count]) + " attempt:")
                 inputs = _in.split(" ")
                 globals["word"] = inputs[0]
                 globals["num"] = inputs[1]
                 exec(program, globals)
+                count += 1
             except Exception as e:
                 print((f"Error: {e}"))
     except KeyboardInterrupt as e:

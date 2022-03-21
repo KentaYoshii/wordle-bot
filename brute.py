@@ -32,15 +32,32 @@ class Brute:
         if self.word == goal:
             return True, []
         self.trimSet(self.word, goal)
+        print("Match with Correct Positions:")
+        print(self.curMatchingPos)
+        print("\n")
+        print("Letters that are in the word but not in the correct spot")
+        print(self.curContains)
+        print("\n")
+        print("Letters that are not in the word")
+        print(self.notContains)
+        print("\n")
         self.drop_words()
-        # word_to_val = self.scoreWords(self.word)
-        # sorted_word_to_val = sorted(word_to_val.items(), key=lambda x: x[1], reverse=True)
         final_set = self.subTrim(self.posWordList)
         final_set2 = self.finalTrim(final_set)
-    
-        print(self.curMatchingPos, "matching set")
-        print(self.curContains, "contains set")
-        return False, final_set2[:numToReturn]
+        final_set3 = self.moreTrim(final_set2)
+
+        return False, final_set3[:numToReturn]
+
+    def moreTrim(self, word_set):
+        retSet = []
+        for word in word_set:
+            count = 0
+            for i in range(len(word)):
+                if word[i] in self.notContains:
+                    count += 1
+            if count == 0:
+                retSet.append(word)
+        return retSet
 
     def trimSet(self, word, goal):
         self.retMatchingPos(word, goal) # returns dic with idx -> char mapping
