@@ -7,8 +7,8 @@ class Brute:
     def __init__(self, goal):
         self.goal = goal
         self.posWordList = word_list()
-        self.curMatchingPos = set()
-        self.curContains = set()
+        self.curMatchingPos = {0: None, 1: None, 2: None, 3: None, 4: None}
+        self.curContains = {}
         self.corPosScore = 1
         self.corConScore = 0.5
         self.notContains = set()
@@ -28,24 +28,22 @@ class Brute:
             
 
     def guess(self, word, goal, numToReturn):
-        print(self.curMatchingPos, "matching set")
-        print(self.curContains, "contains set")
         if word == goal:
             return True, []
         self.trimSet(word, goal)
         self.drop_words()
         word_to_val = self.scoreWords(word)
         sorted_word_to_val = sorted(word_to_val.items(), key=lambda x: x[1], reverse=True)
+        self.posWordList.remove(word)
+        print(self.curMatchingPos, "matching set")
+        print(self.curContains, "contains set")
         return False, sorted_word_to_val[:numToReturn]
 
     def trimSet(self, word, goal):
-        matchingPos = self.retMatchingPos(word, goal)
-        charContained = self.retContains(word, goal)
-        charContained = [char for char in charContained if char not in matchingPos]
-        self.curContains.update(charContained)
-        self.curMatchingPos.update(self.curMatchingPos)
-        curNotContains = [char for char in goal if char not in self.curContains]
-        curNotContains = [char for char in curNotContains if char not in self.curMatchingPos]
+        self.retMatchingPos(word, goal) # returns dic with idx -> char mapping
+        self.retContains(word, goal)
+        curNotContains = [char for char in word if char not in self.curContains]
+        curNotContains = [char for char in curNotContains if char not in self.curMatchingPos.values()]
         self.notContains.update(curNotContains)
         
     def scoreWords(self, word):
@@ -56,25 +54,31 @@ class Brute:
         return word_to_val
             
     def howManyContains(self, word, goal):
-        contains = self.retContains(word, goal)
-        return len(contains)
+        count = 0
+        for i in range(len(word)):
+            if word[i] in goal and word[i] != goal[i]:
+                count += 1
+        return count
 
     def howManyMatch(self, word, goal):
-        matchingPos = self.retMatchingPos(word, goal)
-        return len(matchingPos)
-
-    def retMatchingPos(self, word, goal):
-        matchingPos = []
+        count = 0
         for i in range(len(word)):
             if word[i] == goal[i]:
-                matchingPos.append(i)
-        return matchingPos
+                count += 1
+        return count
+
+    def retMatchingPos(self, word, goal):
+        for i in range(len(word)):
+            if word[i] == goal[i]:  # if the char at the same index is the same
+                self.curMatchingPos[i] = word[i] # add it to the machingPos set
 
     def retContains(self, word, goal):
-        contains = []
         for i in range(len(word)):
-            if word[i] in goal:
-                occurrence = goal.count(word[i])
-                for i in range(occurrence):
-                    contains.append(word[i])
-        return contains
+            print("here")
+            if word[i] in goal and word[i] != goal[i]:
+                if word[i] not in self.curContains:
+                    print("here2")
+                    self.curContains[word[i]] = []
+                    self.curContains[word[i]].append(i)
+                elif i not in self.curContains[word[i]]:
+                    self.curContains[word[i]].append(i)
