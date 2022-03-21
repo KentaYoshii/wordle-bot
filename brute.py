@@ -7,6 +7,7 @@ class Brute:
     def __init__(self, goal):
         self.goal = goal
         self.posWordList = word_list()
+        self.word = None
         self.curMatchingPos = {0: None, 1: None, 2: None, 3: None, 4: None}
         self.curContains = {}
         self.corPosScore = 1
@@ -28,13 +29,15 @@ class Brute:
             
 
     def guess(self, word, goal, numToReturn):
-        if word == goal:
-            return True, []
-        self.trimSet(word, goal)
-        self.drop_words()
-        word_to_val = self.scoreWords(word)
-        sorted_word_to_val = sorted(word_to_val.items(), key=lambda x: x[1], reverse=True)
+        self.word = word
         self.posWordList.remove(word)
+        if self.word == goal:
+            return True, []
+        self.trimSet(self.word, goal)
+        self.drop_words()
+
+        word_to_val = self.scoreWords(self.word)
+        sorted_word_to_val = sorted(word_to_val.items(), key=lambda x: x[1], reverse=True)
         print(self.curMatchingPos, "matching set")
         print(self.curContains, "contains set")
         return False, sorted_word_to_val[:numToReturn]
@@ -49,8 +52,14 @@ class Brute:
     def scoreWords(self, word):
         word_to_val = {}
         for word in self.posWordList:
-            total_score = self.corPosScore * self.howManyMatch(word, self.goal) + self.corConScore * self.howManyContains(word, self.goal)
-            word_to_val[word] = total_score
+            point = 0
+            for i in range(len(word)):
+                if word[i] == self.curMatchingPos[i]:
+                    point += self.corPosScore
+                elif word[i] in self.curContains:
+                    if i in self.curContains[word[i]]:
+                        point += self.corConScore
+            word_to_val[word] = point
         return word_to_val
             
     def howManyContains(self, word, goal):
@@ -74,10 +83,8 @@ class Brute:
 
     def retContains(self, word, goal):
         for i in range(len(word)):
-            print("here")
             if word[i] in goal and word[i] != goal[i]:
                 if word[i] not in self.curContains:
-                    print("here2")
                     self.curContains[word[i]] = []
                     self.curContains[word[i]].append(i)
                 elif i not in self.curContains[word[i]]:
